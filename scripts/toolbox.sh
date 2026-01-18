@@ -9,7 +9,7 @@ case "$choice" in
 		LAT=$(echo $LOC | cut -d, -f1)
 		LON=$(echo $LOC | cut -d, -f2)
 
-		if [ -n "$LAT" ]; then
+		if [[ "$LAT" =~ ^[0-9.-]+$ ]]; then
 			echo "LAT=$LAT" > ~/.cache/location_conf
 			echo "LON=$LON" >> ~/.cache/location_conf
 			
