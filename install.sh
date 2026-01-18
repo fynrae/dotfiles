@@ -64,14 +64,14 @@ echo ":: Configuring Waybar..."
 rm -rf ~/.config/waybar/style.css
 ln -s "$DOTFILES_DIR/waybar/style.css" ~/.config/waybar/style.css
 
-cp "$DOTFILES_DIR/waybar/config" ~/.config/waybar/config
+cp "$DOTFILES_DIR/waybar/config" ~/.config/waybar/config.jsonc
 
 if ! ls /sys/class/power_supply/BAT* 1> /dev/null 2>&1; then
     echo "   Desktop detected (No Battery). Removing modules..."
     
     TMP_CONFIG=$(mktemp)
     jq 'del(.["modules-right"][] | select(. == "custom/battery" or . == "backlight"))' \
-        ~/.config/waybar/config > "$TMP_CONFIG" && mv "$TMP_CONFIG" ~/.config/waybar/config
+        ~/.config/waybar/config.jsonc > "$TMP_CONFIG" && mv "$TMP_CONFIG" ~/.config/waybar/config.jsonc
     
     echo "   Waybar config optimized for Desktop."
 else
