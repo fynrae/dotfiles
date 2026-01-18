@@ -14,7 +14,8 @@ sudo pacman -S --noconfirm --needed \
     wayland-protocols wlsunset ly \
     ttf-hack-nerd ttf-agave-nerd \
     mako wl-clipboard \
-    freetype2 harfbuzz cairo pango wayland libxkbcommon scdoc
+    freetype2 harfbuzz cairo pango \
+	wayland libxkbcommon scdoc jq
 
 echo ":: Building and installing tofi..."
 
@@ -54,10 +55,28 @@ link_config() {
 echo ":: Linking dotfiles..."
 
 link_config "sway" "sway"
-link_config "waybar" "waybar"
 link_config "tofi" "tofi"
 link_config "mako" "mako"
 chmod +x "$DOTFILES_DIR/scripts/"*
+
+echo ":: Configuring Waybar..."
+
+rm -rf ~/.config/waybar/style.css
+ln -s "$DOTFILES_DIR/waybar/style.css" ~/.config/waybar/style.css
+
+cp "$DOTFILES_DIR/waybar/config" ~/.config/waybar/config
+
+if ! ls /sys/class/power_supply/BAT* 1> /dev/null 2>&1; then
+    echo "   Desktop detected (No Battery). Removing modules..."
+    
+    TMP_CONFIG=$(mktemp)
+    jq 'del(.["modules-right"][] | select(. == "custom/battery" or . == "backlight"))' \
+        ~/.config/waybar/config > "$TMP_CONFIG" && mv "$TMP_CONFIG" ~/.config/waybar/config
+    
+    echo "   Waybar config optimized for Desktop."
+else
+    echo "   Laptop detected. Keeping Battery modules."
+fi
 
 echo ":: Setting up scripts..."
 
@@ -79,7 +98,7 @@ sudo systemctl enable ly@tty2.service
 
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
-sudo ufw allow ssh
+# sudo ufw allow ssh
 sudo ufw enable
 
 echo ":: Installation completed"
