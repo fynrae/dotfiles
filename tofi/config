@@ -1,0 +1,12 @@
+width = 100%
+height = 100% 
+border-width = 0
+outline-width = 0
+padding-left = 8 
+padding-top = 4
+result-spacing = 25
+background-color = #000000DD
+text-color = #FFFFFF
+selection-color = #777777
+font = "Hack Nerd Font"
+prompt-text = "RUN: "
